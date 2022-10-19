@@ -13,7 +13,7 @@ import json
 # PARA EL VIERNES ---> Funciones de cifrado/descifrado (simétrico)
 class Alfa():
     def __init__(self):
-        user = "María"
+        pass
     def crearFormulario(self):
         """Función que te crea el usuario y guarda los datos personales CIFRADOS en un archivo JSON"""
         # Usamos AES para beneficiarnos de su rapidez y su fuerza para cirfrar
