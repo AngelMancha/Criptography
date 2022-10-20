@@ -4,6 +4,8 @@ import os
 from cryptography.hazmat.primitives.ciphers import (
     Cipher, algorithms, modes
 )
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 # Tenemos que empezar con un solo usuario para guardar todos sus datos, hacer todas las operaciones
 # y luego avanzar para hacerlo multiusuario
@@ -19,8 +21,8 @@ class Alfa():
         pass
     def crearFormulario(self):
         """Función que te crea el usuario y guarda los datos personales CIFRADOS en un archivo JSON"""
-        # Usamos AES para beneficiarnos de su rapidez y su fuerza para cirfrar
 
+        personal_data = ["usuario: ", "edad: ", "fecha nacimiento: ", "email: ", "contraseña: "]
         #Le pedimos los datos al usuario
 
         """
@@ -41,12 +43,13 @@ class Alfa():
         # Usamos AES para beneficiarnos de su rapidez y su fuerza para cirfrar
         # Encriptamos los datos introducidos por el usuario, excepto la contaseña
         user_cif = self.encrypt(key, user_name, None)
-        print(user_cif)
-        #user_cif = self.encrypt(edad, password, None)
-        #user_cif = self.encrypt(fecha de nacimeinto, password, None)
-        #user_cif = self.encrypt(email, None)
 
-        user_data = {"Usuario": str(user_cif), "Contraseña": password}
+        dato_descifrado = self.decrypt(key, None, user_cif[0], user_cif[1], user_cif[2])
+        print("ESTO TIENE QUE SER EL USUARIO", dato_descifrado)
+
+        #Hacemos un hash de la contraseña para guardarla en la base de datos
+        hashed_password = self.hash_function(password)
+        user_data = {"Usuario": str(user_cif), "Contraseña": str(hashed_password)}
 
 
         with open('data.json', 'w') as fp:
@@ -62,7 +65,6 @@ class Alfa():
         iv = os.urandom(12)
 
        # Construimos un cifrado basado en AES para cifrar con la clave key y la iv calculada anteriormente
-
         encryptor = Cipher( algorithms.AES(key), modes.GCM(iv),).encryptor()
 
         #asociamos datos al texto que queremos cifrar para autenticarlo
