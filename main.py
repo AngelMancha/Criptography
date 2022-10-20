@@ -1,4 +1,3 @@
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 import json
 
 import os
@@ -23,23 +22,24 @@ class Alfa():
         # Usamos AES para beneficiarnos de su rapidez y su fuerza para cirfrar
 
         #Le pedimos los datos al usuario
-        print("Introduce tu nombre de usuario: ")
-        user_name = input()
 
         """
-        print("Introduce tu edad: ")
-        user_name = input()
-
-        print("Introduce tu fecha de nacimiento: ")
-        user_name = input()
-
-        print("Introduce tu email: ")
-        user_name = input()
+        for i in range(0, len(personal_data)-1):
+            print("Introduce tu ", personal_data[i])
+            input_text = input()
         """
+
+
+        print("Introduce el usuario: ")
+        user_name = input()
+
         print("Introduce la contraseña: ")
         password = input()
-        key = os.urandom(16) # Le damos al usuario una clave privada para cifrar sus datos personales
-        #Ciframos y guardamos los datos en json
+
+        # Derivamos una clave de la contraseña que introdujo el usuario
+        key = self.derivate_key(password)
+        # Usamos AES para beneficiarnos de su rapidez y su fuerza para cirfrar
+        # Encriptamos los datos introducidos por el usuario, excepto la contaseña
         user_cif = self.encrypt(key, user_name, None)
         print(user_cif)
         #user_cif = self.encrypt(edad, password, None)
@@ -71,7 +71,7 @@ class Alfa():
         # Ciframos el texto deseado y lo obtenemos
         b = plaintext.encode('utf-8')
         ciphertext = encryptor.update(b) + encryptor.finalize()
-        return ciphertext
+        return iv, ciphertext, encryptor.tag
 
 
     def decrypt(self, key, associated_data, iv, ciphertext, tag):
@@ -82,13 +82,32 @@ class Alfa():
 
         # We put associated_data back in or the tag will fail to verify
         # when we finalize the decryptor.
-        decryptor.authenticate_additional_data(associated_data)
+        #decryptor.authenticate_additional_data(associated_data)
 
         # Decryption gets us the authenticated plaintext.
         # If the tag does not match an InvalidTag exception will be raised.
         return decryptor.update(ciphertext) + decryptor.finalize()
 
-######################################
+
+    def hash_function(self, key):
+        hashed_key = hashes.Hash(hashes.SHA256())
+        byte_hash_key = self.return_bytes(key)
+        hashed_key.update(byte_hash_key)
+        hashed_key.copy()
+        return hashed_key.finalize()
+
+    def return_bytes(self, key):
+        return bytes(key, encoding = 'utf-8')
+
+    def derivate_key(self, password):
+        byte_password=self.return_bytes(password)
+        salt = os.urandom(16)
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=390000)
+        derivate_key=kdf.derive(byte_password)
+        return derivate_key
+
+
+
 
 hola = Alfa()
 Alfa.crearFormulario(hola)
