@@ -16,6 +16,40 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 # El HASH nos sirve como autenticación y para el resumen de toda la información
 
 # PARA EL VIERNES ---> Funciones de cifrado/descifrado (simétrico)
+# Problemáticas que nos encontramos:
+# 1. Libreria con password comunes: Carmen / 123456/ asdf ---> validación de contraseñas
+# 2. Reutilizacion
+# con el salt hacemos que los hashes sean distintos aunque el usemos la misma contraseña y usemos el mismo algoritmo
+# para hacer esto concatenamos la contraseña con algo más --> contraseña + SALT --> calcular este hash.
+# Ese salt es distinto para cada usuario y hay que guardarlo sin cifrar
+# Las dimensiones del salt deben ser considerables y el salt
+
+
+
+# HMAC (TSL)
+# M -------------------------|
+# |                          |
+# | <-----------K----------->|
+# |                          |
+# C -------------------------|
+#                            Hk(M)
+
+# Mensaje --> Lo cifro con una clave
+# Envio el mensaje cifrado y añado un Hash que está hecho con una clave y para ello utilizo una contraseña
+# (p.ej la misma que para el cifrado)
+# Hay que hacer el resumen antes de cifrar
+
+# HMAC (SSH)
+# M
+# |
+# | <-----------K
+# |             |             |
+# C -------------->Hk(C)
+#        Hk(M)
+
+#Al mensaje que ciframos le añadimos un hash del mensaje utilizando la misma clave con la que hemos usado para cifrale el
+# propio mensaje. Se consigue autenticación
+#
 class Alfa():
     def __init__(self):
         pass
@@ -40,7 +74,7 @@ class Alfa():
 
         # Derivamos una clave de la contraseña que introdujo el usuario
         key = self.derivate_key(password)
-        # Usamos AES para beneficiarnos de su rapidez y su fuerza para cirfrar
+        # Usamos AES para beneficiarnos de su rapidez y su fuerza para cifrar
         # Encriptamos los datos introducidos por el usuario, excepto la contaseña
         user_cif = self.encrypt(key, user_name, None)
 
