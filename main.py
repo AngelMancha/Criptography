@@ -1,6 +1,8 @@
 import json
-
+import random
 import os
+import string
+
 from cryptography.hazmat.primitives.ciphers import (
     Cipher, algorithms, modes
 )
@@ -76,21 +78,19 @@ class Alfa():
         # Derivamos una clave de la contraseña que introdujo el usuario
         key = self.derivate_key(password)
         # Usamos AES para beneficiarnos de su rapidez y su fuerza para cifrar
-        # Encriptamos los datos introducidos por el usuario, excepto la contaseña
+        # Ciframos los datos introducidos por el usuario con el cifrado simétrico AES, excepto la contaseña
         user_cif = self.encrypt(key, user_name, None)
 
-
-        """dato_descifrado = self.decrypt(key, None, user_cif[0], user_cif[1], user_cif[2])
-        print("ESTO TIENE QUE SER EL USUARIO", dato_descifrado)
-        """
-
-        #Hacemos un hash de la contraseña para guardarla en la base de datos
-        hashed_password = self.hash_function(password)[0]
-        #también guardamos el salt asociado a la contraseña en la base de datos
-        salt_password = self.hash_function(password)[1]
-        user_data = {"Usuario": str(user_cif), "Contraseña": str(hashed_password)}
+        #Añadimos a la contraseña un salt aleatorio
+        salt_function = self.calculate_salt(password)
+        salt_password = salt_function[1]
+        salt = salt_function[0]
+        #Hacemos un hash del salt+contraseña para guardarla en la base de datos
+        hashed_password = self.hash_function(salt_password)
 
 
+        #Guardamos los datos cifrados y el hash de la contraseña junto con el salt en la base de datos (json)
+        user_data = {"Usuario": str(user_cif), "Password": str(hashed_password), "Salt":salt}
         with open('data.json', 'w') as fp:
             json.dump(user_data, fp)
 
@@ -132,14 +132,10 @@ class Alfa():
 
     def hash_function(self, key):
         hashed_key = hashes.Hash(hashes.SHA256())
-        salt = os.urandom(16)
-        string_salt = salt.decode('utf-8')
-        salt_password = str(salt) + key
-
-        byte_hash_key = self.return_bytes(salt_password)
+        byte_hash_key = self.return_bytes(key)
         hashed_key.update(byte_hash_key)
         hashed_key.copy()
-        return hashed_key.finalize(), salt
+        return hashed_key.finalize()
 
     def return_bytes(self, key):
         return bytes(key, encoding = 'utf-8')
@@ -151,7 +147,10 @@ class Alfa():
         derivate_key=kdf.derive(byte_password)
         return derivate_key
 
-
+    def calculate_salt(self, key):
+        salt = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
+        salt_password = salt + key
+        return salt, salt_password
 
 
 hola = Alfa()
