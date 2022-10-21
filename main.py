@@ -66,6 +66,7 @@ class Alfa():
         """
 
 
+
         print("Introduce el usuario: ")
         user_name = input()
 
@@ -78,11 +79,15 @@ class Alfa():
         # Encriptamos los datos introducidos por el usuario, excepto la contaseña
         user_cif = self.encrypt(key, user_name, None)
 
-        dato_descifrado = self.decrypt(key, None, user_cif[0], user_cif[1], user_cif[2])
+
+        """dato_descifrado = self.decrypt(key, None, user_cif[0], user_cif[1], user_cif[2])
         print("ESTO TIENE QUE SER EL USUARIO", dato_descifrado)
+        """
 
         #Hacemos un hash de la contraseña para guardarla en la base de datos
-        hashed_password = self.hash_function(password)
+        hashed_password = self.hash_function(password)[0]
+        #también guardamos el salt asociado a la contraseña en la base de datos
+        salt_password = self.hash_function(password)[1]
         user_data = {"Usuario": str(user_cif), "Contraseña": str(hashed_password)}
 
 
@@ -127,10 +132,14 @@ class Alfa():
 
     def hash_function(self, key):
         hashed_key = hashes.Hash(hashes.SHA256())
-        byte_hash_key = self.return_bytes(key)
+        salt = os.urandom(16)
+        string_salt = salt.decode('utf-8')
+        salt_password = str(salt) + key
+
+        byte_hash_key = self.return_bytes(salt_password)
         hashed_key.update(byte_hash_key)
         hashed_key.copy()
-        return hashed_key.finalize()
+        return hashed_key.finalize(), salt
 
     def return_bytes(self, key):
         return bytes(key, encoding = 'utf-8')
