@@ -1,18 +1,24 @@
 class Registro:
     """Esta clase solo se va a encargar de validar los datos de inicio de sesión o registro"""
     def __init__(self):
-        self.campos_registro = campos_registro = ["usuario: ", "carrera", "asignaturas: ", "contraseña: "]
+
         self.datos_alumno = []
 
     def registrar_alumno(self):
         """ En esta función se pide los datos al usuario para registrarlo en la aplicación"""
         print("Bienvenido a Alfa!")
         print("\nREGISTRO\n")
+        self.validate_nombre()
         self.validate_usuario()
         self.validate_carrera()
         self.validate_asignatura()
         self.validate_password()
         return self.datos_alumno
+
+
+    def validate_nombre(self)-> str:
+        nombre = input(str("Por favor, introduce tu nombre: "))
+        self.datos_alumno.append(nombre)
 
 
     def validate_usuario(self)-> str:
@@ -27,6 +33,7 @@ class Registro:
                 usuario = str(input("Introduce su nombre de usuario: "))
                 size_str = len(usuario)
         self.datos_alumno.append(usuario)
+
 
     def validate_carrera(self):
         carrera = input("Introduce su carrera. Elige entre estas opciones:\n"
@@ -46,9 +53,9 @@ class Registro:
             self.datos_alumno.append("Ingeniería de Telecomunicaciones")
 
     def validate_asignatura(self):
-        if self.datos_alumno[1] == "Ingeniería Informática":
+        if self.datos_alumno[2] == "Ingeniería Informática":
             self.carrera_inf()
-        if self.datos_alumno[1] == "Ingeniería de Telecomunicaciones":
+        if self.datos_alumno[2] == "Ingeniería de Telecomunicaciones":
             self.carrera_tel()
 
     def validate_password(self):

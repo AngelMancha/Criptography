@@ -9,7 +9,8 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 class Alfa():
-    def __init__(self, usuario, carrera, asignatura, password):
+    def __init__(self, nombre, usuario, carrera, asignatura, password):
+        self.nombre=nombre
         self.usuario = usuario
         self.carrera = carrera
         self.asignatura = asignatura
@@ -17,11 +18,8 @@ class Alfa():
 
     def cifrardatos(self):
         """Función que te crea el usuario y guarda los datos personales CIFRADOS en un archivo JSON"""
-        # Derivamos una clave de la contraseña que introdujo el usuario
-        key = self.derivate_key(self.password)
-        # Usamos AES para beneficiarnos de su rapidez y su fuerza para cifrar
-        # Ciframos los datos introducidos por el usuario con el cifrado simétrico AES, excepto la contaseña
-        user_cif = self.encrypt(key, self.usuario, None)
+
+
 
         #Añadimos a la contraseña un salt aleatorio
         salt_function = self.calculate_salt(self.password)
@@ -34,8 +32,19 @@ class Alfa():
 
 
 
+        #Derivamos una clave de la contraseña que introdujo el usuario utilizando el salt generado.
+        #Esta clave es la clave que vamos a utilizar para el cirfrado y el descrifrado de datos
+        salt_bytes=bytes(salt, encoding = 'utf-8')
+        key = self.derivate_key(self.password, salt_bytes)
+        # Usamos AES para beneficiarnos de su rapidez y su fuerza para cifrar
+        # Ciframos los datos introducidos por el usuario con el cifrado simétrico AES, excepto la contaseña
+        nombre_cif = self.encrypt(key, self.nombre, None)
+
+
+
+
         #Guardamos los datos cifrados y el hash de la contraseña junto con el salt en la base de datos (json)
-        user_data = {"Usuario": str(user_cif[1]), "Password": str(hashed_password), "Salt":salt}
+        user_data = {"Usuario": str(self.usuario), "Nombre": str(nombre_cif[1]), "Password": str(hashed_password), "Salt":salt, "iv": str(nombre_cif[0]), "tag": str(nombre_cif[2])}
         with open('data.json', 'w') as fp:
             json.dump(user_data, fp)
 
@@ -43,7 +52,7 @@ class Alfa():
             data = json.load(fp)
 
 
-        self.check_hash()
+
     def encrypt(self, key, plaintext, associated_data: None):
         # Generamos un IV de 96 bits
         iv = os.urandom(12)
@@ -85,9 +94,8 @@ class Alfa():
     def return_bytes(self, key):
         return bytes(key, encoding = 'utf-8')
 
-    def derivate_key(self, password):
+    def derivate_key(self, password, salt):
         byte_password=self.return_bytes(password)
-        salt = os.urandom(16)
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=390000)
         derivate_key=kdf.derive(byte_password)
         return derivate_key
@@ -97,32 +105,65 @@ class Alfa():
         salt_password = salt + key
         return salt, salt_password
 
-    def check_hash(self):
+    def read_json_file(self, json_file):
+        with open(json_file, "r", encoding="utf-8") as file:
+            data = json.load(file)
+        return data
+
+    def inicio_sesion(self):
 
         """dato_descifrado = self.decrypt(key, None, user_cif[0], user_cif[1], user_cif[2])
          print("ESTO TIENE QUE SER EL USUARIO", dato_descifrado)
          """
+        #json_file = self.read_json_file("data.json")
+
         print( "\nINICIO DE SESIÓN\n" )
-        """print("Introduce tu nombre de usuario: ")
 
 
-        with open('data.json', "r", encoding="utf-8") as file:
-            data = json.load(file)
-        return data"""
+
+        result = False
+        user_name = input(str("Introduce tu nombre de usuario: "))
+        while not result:
+
+            with open("data.json", "r", encoding="utf-8") as file:
+                usuario = json.load(file)
+
+                json_usuario = usuario["Usuario"]
+                json_salt=usuario["Salt"]
+                json_iv=usuario["iv"]
+                json_tag=usuario["tag"]
+                #obtenemos la clave de cifrado y descifrado del usuario acutal en el archivo json
+                #json_key = self.derivate_key(user_password, json_salt)
+                #result_user=self.decrypt(json_key, None, json_iv,json_user,json_tag)
+            if json_usuario == user_name:
+                result=True
+
+            if result == False:
+                print("EL nombre de usuario introducido no está registrado")
+                user_name = input(str("Vuelve a introducir tu nombre de usuario: "))
+            else:
+                print("El suario exixte")
 
 
-        print("Introduce la contraseña de INICIO DE SESIÓN: ")
-        password_log_in = input()
-        with open('data.json', 'r') as fp:
-            data = json.load(fp)
-            salt_json = data["Salt"]
-        salt_password_log_in = salt_json + password_log_in
-        compare1 = self.hash_function(salt_password_log_in)
-        with open('data.json', 'r') as fp:
-            data = json.load(fp)
-            compare2 = data["Password"]
+        result = False
+        password_log_in = input("Introduce la contraseña de incio de sesión: ")
+        while not result:
 
-        if str(compare1) == str(compare2):
-            print("BIENVENIDA PUTA")
-        else:
-            print("ZORRONA QUE TE HEMOS CAZDO \nERES UNA INTRUSA")
+            with open('data.json', 'r') as fp:
+                data = json.load(fp)
+                salt_json = data["Salt"]
+            salt_password_log_in = salt_json + password_log_in
+            compare1 = self.hash_function(salt_password_log_in)
+            with open('data.json', 'r') as fp:
+                data = json.load(fp)
+                compare2 = data["Password"]
+
+            if str(compare1) == str(compare2):
+                result = True
+
+            if result == False:
+                print("La contraseña es incorrecta")
+                password_log_in = input("Vuelve a introducir la contraseña de inicio de sesión: ")
+            else:
+                print("¡Bienvenido a ALFA!")
+
