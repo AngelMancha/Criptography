@@ -39,21 +39,24 @@ class Alfa():
         # Usamos AES para beneficiarnos de su rapidez y su fuerza para cifrar
         # Ciframos los datos introducidos por el usuario con el cifrado simétrico AES, excepto la contaseña
         nombre_cif = self.encrypt(key, self.nombre, None)
+        carrera_cif = self.encrypt(key, self.carrera, None)
+        asignatura_cif = self.encrypt(key, self.asignatura, None)
+
+        #Rellenamos el archivo json con los datos de los alumnos que se van a registrar
+        user_data = {"Usuario": str(self.usuario), "Nombre": str(nombre_cif[1]), "Carrera": str(carrera_cif[1]), "Asignatura": str(asignatura_cif[1]), "Password": str(hashed_password), "Salt": salt}
+
+        with open("data.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
+            data.append(user_data)
+        with open("data.json", "w", encoding="utf-8", newline="") as file:
+            json.dump(data, file, indent=2)
 
 
-
-
-        #Guardamos los datos cifrados y el hash de la contraseña junto con el salt en la base de datos (json)
-        user_data = {"Usuario": str(self.usuario), "Nombre": str(nombre_cif[1]), "Password": str(hashed_password), "Salt":salt, "iv": str(nombre_cif[0]), "tag": str(nombre_cif[2])}
-        with open('data.json', 'w') as fp:
-            json.dump(user_data, fp)
-
-        with open('data.json', 'r') as fp:
-            data = json.load(fp)
 
 
 
     def encrypt(self, key, plaintext, associated_data: None):
+        """Función que implementa AES y cifra los datos con la clave "Key" """
         # Generamos un IV de 96 bits
         iv = os.urandom(12)
 
@@ -70,7 +73,7 @@ class Alfa():
 
 
     def decrypt(self, key, associated_data, iv, ciphertext, tag):
-        """Esta función descrifra """
+        """Función que descifra los datos utilizando la clave "key" """
         # Usamos AES-GCM para poder proporcionar al usuario tanto la confidencialidad de sus datos como su integridad
         # Es por ello que usamos el modo GCM (Galois/Counter Mode)
         decryptor = Cipher(algorithms.AES(key),modes.GCM(iv, tag)).decryptor()
@@ -85,6 +88,7 @@ class Alfa():
 
 
     def hash_function(self, key):
+        """Función que calcula un hash de la contraseña"""
         hashed_key = hashes.Hash(hashes.SHA256())
         byte_hash_key = self.return_bytes(key)
         hashed_key.update(byte_hash_key)
@@ -92,78 +96,89 @@ class Alfa():
         return hashed_key.finalize()
 
     def return_bytes(self, key):
+        """Función para transformar a bytes una cadena de string"""
         return bytes(key, encoding = 'utf-8')
 
     def derivate_key(self, password, salt):
+        """Función para obtener una clave derivada a partir de la contraseña"""
         byte_password=self.return_bytes(password)
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=390000)
         derivate_key=kdf.derive(byte_password)
         return derivate_key
 
     def calculate_salt(self, key):
+        """Función para calcular un salt aleatorio"""
         salt = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
         salt_password = salt + key
         return salt, salt_password
 
     def read_json_file(self, json_file):
+        "Función para abrir el archivo json donde están los alumnos resgistrados"
         with open(json_file, "r", encoding="utf-8") as file:
             data = json.load(file)
         return data
 
     def inicio_sesion(self):
+        """Función para la implementación del inicio de sesión. Comprueba que el usuario esté registrado
+        y en caso de que lo esté le pide la contraseña al usuario. Si es correcta le da la bienvenida a la aplicacion"""
 
-        """dato_descifrado = self.decrypt(key, None, user_cif[0], user_cif[1], user_cif[2])
-         print("ESTO TIENE QUE SER EL USUARIO", dato_descifrado)
-         """
-        #json_file = self.read_json_file("data.json")
 
         print( "\nINICIO DE SESIÓN\n" )
 
+        json_file = self.read_json_file("data.json")
 
-
-        result = False
+        user_exists = False
         user_name = input(str("Introduce tu nombre de usuario: "))
-        while not result:
+        #Este bucle se ejectua hasta que se encuentre en la base de datos el nombre de usuario
+        #que ha introducido el alumno
+        while not user_exists:
+            #Para ello buscamos entre todos los alumnos registrados en la base de datos (json)
+            for usuario in json_file:
 
-            with open("data.json", "r", encoding="utf-8") as file:
-                usuario = json.load(file)
+                if usuario["Usuario"] == user_name:
+                     user_exists=True
 
-                json_usuario = usuario["Usuario"]
-                json_salt=usuario["Salt"]
-                json_iv=usuario["iv"]
-                json_tag=usuario["tag"]
-                #obtenemos la clave de cifrado y descifrado del usuario acutal en el archivo json
-                #json_key = self.derivate_key(user_password, json_salt)
-                #result_user=self.decrypt(json_key, None, json_iv,json_user,json_tag)
-            if json_usuario == user_name:
-                result=True
-
-            if result == False:
+            #Si una vez iterada toda la base de datos no hay ningún nombre de usuario que
+            #coincida, se le pregunta al usuario si quiere volver a introducir otro nombre de
+            #usuario o terminar con la operación
+            if user_exists == False:
                 print("EL nombre de usuario introducido no está registrado")
+                continue_var=input("¿Quieres volver a intentarlo? [y/n]")
+                if continue_var == "n":
+                    break
                 user_name = input(str("Vuelve a introducir tu nombre de usuario: "))
+            #Si se ha encontrado el usuario en la base de datos:
             else:
                 print("El suario exixte")
 
 
-        result = False
-        password_log_in = input("Introduce la contraseña de incio de sesión: ")
-        while not result:
+        #Solo si el usuario existe, el usuario le pedirá que introduzca la contraseña
+        #asociada a ese usuario
+        if user_exists:
+            correct_password=False
+            password_log_in = input("Introduce la contraseña de incio de sesión: ")
+            while not correct_password:
 
-            with open('data.json', 'r') as fp:
-                data = json.load(fp)
-                salt_json = data["Salt"]
-            salt_password_log_in = salt_json + password_log_in
-            compare1 = self.hash_function(salt_password_log_in)
-            with open('data.json', 'r') as fp:
-                data = json.load(fp)
-                compare2 = data["Password"]
+                for usuario in json_file:
 
-            if str(compare1) == str(compare2):
-                result = True
+                    if  usuario["Usuario"] == user_name:
+                        #1: obtiene el salt asociado a el usuario
+                        salt_json = usuario["Salt"]
+                        #2: se lo añade a la contraseña que ha introducido el usuario ahora
+                        salt_password_log_in = salt_json + password_log_in
+                        #3: le calcula el hash a la contraseña que ha introducido el usuario más el salt
+                        compare1 = self.hash_function(salt_password_log_in)
+                        #4: comparamos el hash calculado ahora con el guardado para ese usuario en la base de datos:
+                        compare2 = usuario["Password"]
 
-            if result == False:
-                print("La contraseña es incorrecta")
-                password_log_in = input("Vuelve a introducir la contraseña de inicio de sesión: ")
-            else:
-                print("¡Bienvenido a ALFA!")
+
+                if str(compare1) == str(compare2):
+                    correct_password = True
+                #si no coinciden el sistema le vuelve a pedir la contraseña
+                if correct_password == False:
+                    print("La contraseña es incorrecta")
+                    password_log_in = input("Vuelve a introducir la contraseña de inicio de sesión: ")
+                # si coinciden hambos hashes
+                else:
+                    print("¡Bienvenido a ALFA!")
 
