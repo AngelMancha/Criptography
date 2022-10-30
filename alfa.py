@@ -25,20 +25,25 @@ class Alfa():
 
         #Añadimos a la contraseña un salt aleatorio
         salt_function = self.calculate_salt(self.password)
+        #Obtenemos la contraseña con el salt añadido
         salt_password = salt_function[1]
+        #Y además guardamos el salt por separado en otra variabld
         salt = salt_function[0]
         #Hacemos un hash del salt+contraseña para guardarla en la base de datos
         hashed_password = self.hash_function(salt_password)
 
 
+
         #Guardamos los datos cifrados y el hash de la contraseña junto con el salt en la base de datos (json)
-        user_data = {"Usuario": str(user_cif), "Password": str(hashed_password), "Salt":salt}
+        user_data = {"Usuario": str(user_cif[1]), "Password": str(hashed_password), "Salt":salt}
         with open('data.json', 'w') as fp:
             json.dump(user_data, fp)
 
         with open('data.json', 'r') as fp:
             data = json.load(fp)
 
+
+        self.check_hash()
     def encrypt(self, key, plaintext, associated_data: None):
         # Generamos un IV de 96 bits
         iv = os.urandom(12)
@@ -91,3 +96,33 @@ class Alfa():
         salt = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
         salt_password = salt + key
         return salt, salt_password
+
+    def check_hash(self):
+
+        """dato_descifrado = self.decrypt(key, None, user_cif[0], user_cif[1], user_cif[2])
+         print("ESTO TIENE QUE SER EL USUARIO", dato_descifrado)
+         """
+        print( "\nINICIO DE SESIÓN\n" )
+        """print("Introduce tu nombre de usuario: ")
+
+
+        with open('data.json', "r", encoding="utf-8") as file:
+            data = json.load(file)
+        return data"""
+
+
+        print("Introduce la contraseña de INICIO DE SESIÓN: ")
+        password_log_in = input()
+        with open('data.json', 'r') as fp:
+            data = json.load(fp)
+            salt_json = data["Salt"]
+        salt_password_log_in = salt_json + password_log_in
+        compare1 = self.hash_function(salt_password_log_in)
+        with open('data.json', 'r') as fp:
+            data = json.load(fp)
+            compare2 = data["Password"]
+
+        if str(compare1) == str(compare2):
+            print("BIENVENIDA PUTA")
+        else:
+            print("ZORRONA QUE TE HEMOS CAZDO \nERES UNA INTRUSA")

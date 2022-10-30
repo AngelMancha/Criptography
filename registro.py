@@ -7,11 +7,12 @@ class Registro:
     def registrar_alumno(self):
         """ En esta función se pide los datos al usuario para registrarlo en la aplicación"""
         print("Bienvenido a Alfa!")
+        print("\nREGISTRO\n")
         self.validate_usuario()
         self.validate_carrera()
         self.validate_asignatura()
         self.validate_password()
-        return self.registrar_alumno()
+        return self.datos_alumno
 
 
     def validate_usuario(self)-> str:
@@ -58,14 +59,15 @@ class Registro:
         password_segura = self.password_segura(password1)
         while not password_segura:
             print("¡Contraseña poco segura! Por favor, siga las indicaciones dadas para tener una contraseña segura.")
-            password1 = input("Por favor, ingrese su contraseña\n"
+            password1 = input("Por favor, vuelva a ingresar su contraseña\n"
                              "Recuerde que una contraseña segura debe tener mínimo 8 caracteres. "
                              "Debe incluir números.\n")
             password_segura = self.password_segura(password1)
-        password2 = input("Por favor, repita la contraseña\n")
+
+        password2 = input("La contraseña es válida, vuelva a confirmarla\n")
         aux = False
-        if password2 != password1:
-            aux = False
+        if password2 == password1:
+            aux = True
         while not aux:
             password2 = input("Las contraseñas deben coincidir. \nPor favor, repita la contraseña")
             if password2 == password1:
@@ -74,13 +76,12 @@ class Registro:
 
     def password_segura(self, password):
         size_pasword = len(password)
-        if size_pasword < 8:
-            return False
-        aux = False
-        for letter in password:
-            if letter.isdigit() == True:
-                aux = True
-        return aux
+        value = False
+        if size_pasword >= 8:
+            for letter in password:
+                if letter.isdigit() == True:
+                    value = True
+        return value
 
     def carrera_inf(self):
         posibles_opciones = ["A", "B", "a", "b"]
