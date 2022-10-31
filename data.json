@@ -1,3 +1,12 @@
 [
-
+  {
+    "Usuario": "angelito",
+    "Nombre": "b'\\x10?(\\xb1\\xd2'",
+    "Carrera": "b'\\xa5{\\x85\\xd1E%h_RTj\\xc1\\xb6\\xee\\x8f\\xfbh\\xed\\xf0k]\\x83'",
+    "Asignatura": "\u00f7\u008eCp\u0099g(7v8\u008a\\9\u00d0R*S\u00cab\u00efY\u0004\u0095\u00d8&\u00ac0\bBEW\u00c1\u00fd\u00f7\u0006\u00b3",
+    "Password": "b'\\x08\\x85/\\x04\\x92=\\xf5\\xe6\\xe9aq\\x9c\\xe2X1\\xc3\\xaa\\xef\\xaf\\x8c>\\xe3\\x01\\xc2}\\xe4y\\x11\\xc3\\xeb\\x9dD'",
+    "Salt": "TAYC7V1Z31U1AWWA",
+    "iv": "Z\u00d2\u0000\u00fc\u0090W\u0017U2b\\\u00ad",
+    "tag": "\u00a44+\u00b9\"=*\u00bf:\u009fJ\u00f8N2\u0016V"
+  }
 ]

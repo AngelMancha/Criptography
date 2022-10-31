@@ -36,6 +36,7 @@ class Alfa():
         #Esta clave es la clave que vamos a utilizar para el cirfrado y el descrifrado de datos
         salt_bytes=bytes(salt, encoding = 'utf-8')
         key = self.derivate_key(self.password, salt_bytes)
+
         # Usamos AES para beneficiarnos de su rapidez y su fuerza para cifrar
         # Ciframos los datos introducidos por el usuario con el cifrado simétrico AES, excepto la contaseña
         nombre_cif = self.encrypt(key, self.nombre, None)
@@ -43,7 +44,9 @@ class Alfa():
         asignatura_cif = self.encrypt(key, self.asignatura, None)
 
         #Rellenamos el archivo json con los datos de los alumnos que se van a registrar
-        user_data = {"Usuario": str(self.usuario), "Nombre": str(nombre_cif[1]), "Carrera": str(carrera_cif[1]), "Asignatura": str(asignatura_cif[1]), "Password": str(hashed_password), "Salt": salt}
+        user_data = {"Usuario": str(self.usuario), "Nombre": str(nombre_cif[1]), "Carrera": str(carrera_cif[1]), 
+                     "Asignatura": (asignatura_cif[1]).decode('latin-1'), "Password": str(hashed_password), "Salt": salt,
+                     "iv": (asignatura_cif[0]).decode('latin-1'), "tag": (asignatura_cif[2]).decode('latin-1')}
 
         with open("data.json", "r", encoding="utf-8") as file:
             data = json.load(file)
@@ -181,4 +184,36 @@ class Alfa():
                 # si coinciden hambos hashes
                 else:
                     print("¡Bienvenido a ALFA!")
+
+
+                    question = input("¿Deseas  obtener la asignatura en la que estás matriculado?")
+                    if question == "y" or question == "Y":
+                        for usuario in json_file:
+
+                            if usuario["Usuario"] == user_name:
+                                salt_json = usuario["Salt"]
+                                salt_json_bytes = self.return_bytes(salt_json)
+
+                                iv_json = usuario["iv"]
+                                iv_json_bytes = iv_json.encode('latin-1')
+
+                                tag_json = usuario["tag"]
+                                tag_json_bytes = tag_json.encode('latin-1')
+
+                                key_descif=self.derivate_key(password_log_in, salt_json_bytes)
+
+                                asignatura_cif=usuario["Asignatura"]
+                                asignatura_cif_bytes=asignatura_cif.encode('latin-1')
+
+
+                                asignatura_descif=self.decrypt(key_descif, None, iv_json_bytes ,asignatura_cif_bytes , tag_json_bytes)
+
+                        print("El usuario ",user_name, "está matriculado en la asignatura " , asignatura_descif.decode())
+
+
+
+
+
+
+
 

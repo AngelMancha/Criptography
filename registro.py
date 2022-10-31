@@ -37,25 +37,25 @@ class Registro:
 
     def validate_carrera(self):
         carrera = input("Introduce su carrera. Elige entre estas opciones:\n"
-                        "A) Ingeniería Informática \n"
-                        "B) Ingeniería de Telecomunicaciones \n")
+                        "A) Ingenieria Informatica \n"
+                        "B) Ingenieria de Telecomunicaciones \n")
         posibles_opciones = ["A", "B", "a", "b"]
         while carrera not in posibles_opciones:
             carrera = input("Introduce su carrera. Elige entre estas opciones:\n"
-                            "A) Ingeniería Informática \n"
-                            "B) Ingeniería de Telecomunicaciones \n")
+                            "A) Ingenieria Informatica \n"
+                            "B) Ingenieria de Telecomunicaciones \n")
             print("Elija entre A, B o C")
             if carrera in posibles_opciones:
                 break
         if carrera == "a" or carrera == "A":
-            self.datos_alumno.append("Ingeniería Informática")
+            self.datos_alumno.append("Ingenieria Informatica")
         if carrera == "b" or carrera == "B":
-            self.datos_alumno.append("Ingeniería de Telecomunicaciones")
+            self.datos_alumno.append("Ingenieria de Telecomunicaciones")
 
     def validate_asignatura(self):
-        if self.datos_alumno[2] == "Ingeniería Informática":
+        if self.datos_alumno[2] == "Ingenieria Informatica":
             self.carrera_inf()
-        if self.datos_alumno[2] == "Ingeniería de Telecomunicaciones":
+        if self.datos_alumno[2] == "Ingenieria de Telecomunicaciones":
             self.carrera_tel()
 
     def validate_password(self):
@@ -93,33 +93,33 @@ class Registro:
     def carrera_inf(self):
         posibles_opciones = ["A", "B", "a", "b"]
         asignatura = input("Introduce su asignatura. Elige entre estas opciones:\n"
-                           "A) Criptografía y seguridad informática \n"
+                           "A) Criptografia y seguridad informatica \n"
                            "B) Heurística y Optimización \n")
         while asignatura not in posibles_opciones:
             asignatura = input("Introduce su asignatura. Elige entre estas opciones:\n"
-                               "A) Criptografía y seguridad informática \n"
-                               "B) Heurística y Optimización \n")
+                               "A) Criptografia y seguridad informatica \n"
+                               "B) Heuristica y Optimizacion \n")
             print("Elija entre A, B o C")
             if asignatura in posibles_opciones:
                 break
         if asignatura == "a" or asignatura == "A":
-            self.datos_alumno.append("Criptografía y seguridad informática")
+            self.datos_alumno.append("Criptografia y seguridad informatica")
         if asignatura == "b" or asignatura == "B":
-            self.datos_alumno.append("Heurística y Optimización")
+            self.datos_alumno.append("Heuristica y Optimizacion")
 
     def carrera_tel(self):
         posibles_opciones = ["A", "B", "a", "b"]
         asignatura = input("Introduce su asignatura. Elige entre estas opciones:\n"
-                           "A) Sistemas Electrónicos \n"
-                           "B) Teoría moderna de la detección y estimación \n")
+                           "A) Sistemas Electronicos \n"
+                           "B) Teoria moderna de la deteccion y estimacion \n")
         while asignatura not in posibles_opciones:
             asignatura = input("Introduce su asignatura. Elige entre estas opciones:\n"
-                               "A) Sistemas Electrónicos \n"
-                               "B) Teoría moderna de la detección y estimación \n")
+                               "A) Sistemas Electronicos \n"
+                               "B) Teoria moderna de la deteccion y estimacion \n")
             print("Elija entre A, B o C")
             if asignatura in posibles_opciones:
                 break
         if asignatura == "a" or asignatura == "A":
             self.datos_alumno.append("Sistemas Electrónicos")
         if asignatura == "b" or asignatura == "B":
-            self.datos_alumno.append("Teoría moderna de la detección y estimación")
+            self.datos_alumno.append("Teoria moderna de la deteccion y estimacion")
