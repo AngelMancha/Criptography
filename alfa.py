@@ -19,8 +19,6 @@ class Alfa():
     def cifrardatos(self):
         """Función que te crea el usuario y guarda los datos personales CIFRADOS en un archivo JSON"""
 
-
-
         #Añadimos a la contraseña un salt aleatorio
         salt_function = self.calculate_salt(self.password)
         #Obtenemos la contraseña con el salt añadido
@@ -29,8 +27,6 @@ class Alfa():
         salt = salt_function[0]
         #Hacemos un hash del salt+contraseña para guardarla en la base de datos
         hashed_password = self.hash_function(salt_password)
-
-
 
         #Derivamos una clave de la contraseña que introdujo el usuario utilizando el salt generado.
         #Esta clave es la clave que vamos a utilizar para el cirfrado y el descrifrado de datos
@@ -54,10 +50,6 @@ class Alfa():
         with open("data.json", "w", encoding="utf-8", newline="") as file:
             json.dump(data, file, indent=2)
 
-
-
-
-
     def encrypt(self, key, plaintext, associated_data: None):
         """Función que implementa AES y cifra los datos con la clave "Key" """
         # Generamos un IV de 96 bits
@@ -74,7 +66,6 @@ class Alfa():
         ciphertext = encryptor.update(b) + encryptor.finalize()
         return iv, ciphertext, encryptor.tag
 
-
     def decrypt(self, key, associated_data, iv, ciphertext, tag):
         """Función que descifra los datos utilizando la clave "key" """
         # Usamos AES-GCM para poder proporcionar al usuario tanto la confidencialidad de sus datos como su integridad
@@ -88,7 +79,6 @@ class Alfa():
         # Decryption gets us the authenticated plaintext.
         # If the tag does not match an InvalidTag exception will be raised.
         return decryptor.update(ciphertext) + decryptor.finalize()
-
 
     def hash_function(self, key):
         """Función que calcula un hash de la contraseña"""
@@ -124,12 +114,8 @@ class Alfa():
     def inicio_sesion(self):
         """Función para la implementación del inicio de sesión. Comprueba que el usuario esté registrado
         y en caso de que lo esté le pide la contraseña al usuario. Si es correcta le da la bienvenida a la aplicacion"""
-
-
         print( "\nINICIO DE SESIÓN\n" )
-
         json_file = self.read_json_file("data.json")
-
         user_exists = False
         user_name = input(str("Introduce tu nombre de usuario: "))
         #Este bucle se ejectua hasta que se encuentre en la base de datos el nombre de usuario
