@@ -46,7 +46,7 @@ class Alfa():
         #Rellenamos el archivo json con los datos de los alumnos que se van a registrar
         user_data = {"Usuario": str(self.usuario), "Nombre": str(nombre_cif[1]), "Carrera": str(carrera_cif[1]), 
                      "Asignatura": (asignatura_cif[1]).decode('latin-1'), "Password": str(hashed_password), "Salt": salt,
-                     "iv": (asignatura_cif[0]).decode('latin-1'), "tag": (asignatura_cif[2]).decode('latin-1')}
+                     "iv_asig": (asignatura_cif[0]).decode('latin-1'), "tag_asig": (asignatura_cif[2]).decode('latin-1')}
 
         with open("data.json", "r", encoding="utf-8") as file:
             data = json.load(file)
@@ -186,7 +186,7 @@ class Alfa():
                     print("¡Bienvenido a ALFA!")
 
 
-                    question = input("¿Deseas  obtener la asignatura en la que estás matriculado?")
+                    question = input("¿Deseas  obtener la asignatura en la que estás matriculado [y/n]?")
                     if question == "y" or question == "Y":
                         for usuario in json_file:
 
@@ -194,10 +194,10 @@ class Alfa():
                                 salt_json = usuario["Salt"]
                                 salt_json_bytes = self.return_bytes(salt_json)
 
-                                iv_json = usuario["iv"]
+                                iv_json = usuario["iv_asig"]
                                 iv_json_bytes = iv_json.encode('latin-1')
 
-                                tag_json = usuario["tag"]
+                                tag_json = usuario["tag_asig"]
                                 tag_json_bytes = tag_json.encode('latin-1')
 
                                 key_descif=self.derivate_key(password_log_in, salt_json_bytes)
