@@ -44,13 +44,15 @@ class Alfa():
 
         #Rellenamos el archivo json con los datos de los alumnos que se van a registrar
         user_data = {"Usuario": str(self.usuario), "Nombre": str(nombre_cif[1]), "Carrera": str(carrera_cif[1]), 
-                     "Asignatura": (asignatura_cif[1]).decode('latin-1'), "Password": str(hashed_password), "Salt": salt,
-                     "iv_asig": (asignatura_cif[0]).decode('latin-1'), "tag_asig": (asignatura_cif[2]).decode('latin-1')}
+                     "Asignatura": (asignatura_cif[1]).decode('latin-1'), "Password": hashed_password.decode('latin-1'), "Salt": salt,
+                     "iv_asig": (asignatura_cif[0]).decode('latin-1'), "tag_asig": (asignatura_cif[2]).decode('latin-1'),
+                    "private_key": private_key_bytes.decode('utf-8'), "public_key": public_key_bytes.decode('utf-8')
+        }
 
-        with open("data.json", "r", encoding="utf-8") as file:
+        with open("database\data.json", "r", encoding="utf-8") as file:
             data = json.load(file)
             data.append(user_data)
-        with open("data.json", "w", encoding="utf-8", newline="") as file:
+        with open("database\data.json", "w", encoding="utf-8", newline="") as file:
             json.dump(data, file, indent=2)
 
     def encrypt(self, key, plaintext, associated_data: None):
@@ -116,7 +118,8 @@ class Alfa():
 
     def create_tuition(self, user, asignatura):
         """Crea un documento con las asignaturas en las que está matriculado"""
-        file_name = str(user) + "_matricula.txt"
+        path = "database/matricula/"
+        file_name = path + str(user) + "_matricula.txt"
         file = open(file_name, "w")
         file.write("Alumno: " + user + os.linesep)
         file.write("Asignatura: " + asignatura + os.linesep)
@@ -127,14 +130,17 @@ class Alfa():
         doc_data = doc.read()
         doc.close()
         return doc_data
-    def sign_document(self, document, key):
+    def sign_document(self, document, key, private_key_str):
         """Sirve para firmar el mensaje"""
         # primero generamos la clave privada del usuario
-        private_key = self.generate_kv()
+
+        #private_keys_bytes = private_key_str.encode('utf-8')
+        private_key = self.desserialize_private_key(private_key_str, key)
+        #private_key = self.generate_kv()
         #obtenemos  la clave privada y pública serialiánzola y cifrándola con la clave del usuario
-        private_key_bytes = self.serialize_private_key(private_key, key)
-        public_key_bytes = self.serialize_public_key(private_key)
-        #GUARDAR EN JSON
+       # private_key_bytes = self.serialize_private_key(private_key, key)
+        #public_key_bytes = self.serialize_public_key(private_key)
+
         doc_bytes = self.document_bytes(document)
         signature = private_key.sign(doc_bytes,
                                     padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
@@ -142,7 +148,7 @@ class Alfa():
                                     hashes.SHA256())
 
         #añadimos al documento original la firma obtenida
-        self.add_signature(document, signature)
+        self.add_signature( document, signature)
         return signature
 
     def verify_document(self, private_key, documento, signature):
@@ -175,12 +181,17 @@ class Alfa():
             encryption_algorithm=serialization.BestAvailableEncryption(password)
         )
 
+    def desserialize_private_key(self, private_key, password):
+        print("El tipo de dato de la contraseña en desserialized es: ", type(password))
+        print("El valor es: ", password)
+        return serialization.load_pem_private_key(private_key.encode('utf-8'), password = password)
+
 
     def inicio_sesion(self):
         """Función para la implementación del inicio de sesión. Comprueba que el usuario esté registrado
         y en caso de que lo esté le pide la contraseña al usuario. Si es correcta le da la bienvenida a la aplicacion"""
         print( "\nINICIO DE SESIÓN\n" )
-        json_file = self.read_json_file("data.json")
+        json_file = self.read_json_file("database/data.json")
         user_exists = False
         user_name = input(str("Introduce tu nombre de usuario: "))
         #Este bucle se ejectua hasta que se encuentre en la base de datos el nombre de usuario
@@ -203,7 +214,7 @@ class Alfa():
                 user_name = input(str("Vuelve a introducir tu nombre de usuario: "))
             #Si se ha encontrado el usuario en la base de datos:
             else:
-                print("El suario exixte")
+                print("El usuario existe")
 
 
         #Solo si el usuario existe, el usuario le pedirá que introduzca la contraseña
@@ -215,7 +226,7 @@ class Alfa():
 
                 for usuario in json_file:
 
-                    if  usuario["Usuario"] == user_name:
+                    if usuario["Usuario"] == user_name:
                         #1: obtiene el salt asociado a el usuario
                         salt_json = usuario["Salt"]
                         #2: se lo añade a la contraseña que ha introducido el usuario ahora
@@ -223,7 +234,9 @@ class Alfa():
                         #3: le calcula el hash a la contraseña que ha introducido el usuario más el salt
                         compare1 = self.hash_function(salt_password_log_in)
                         #4: comparamos el hash calculado ahora con el guardado para ese usuario en la base de datos:
-                        compare2 = usuario["Password"]
+                        compare2 = usuario["Password"] #string
+                        compare2 = compare2.encode('latin-1')# byte
+                        print("La contraseña sacada del JSON es: ", compare2)
 
 
                 if str(compare1) == str(compare2):
@@ -256,16 +269,20 @@ class Alfa():
                                 asignatura_cif=usuario["Asignatura"]
                                 asignatura_cif_bytes=asignatura_cif.encode('latin-1')
 
+                                kv = usuario["private_key"]
+                                ku = usuario["public_key"]
 
                                 asignatura_descif=self.decrypt(key_descif, None, iv_json_bytes ,asignatura_cif_bytes , tag_json_bytes)
 
                         self.create_tuition(user_name, asignatura_descif.decode())
                         print("Se ha generado un documento para ",user_name, "con la asignatura" , asignatura_descif.decode())
-                        print("contraseña hash: ", compare2)
-                        print("Tipo de dato: ", type(compare2.encode()))
                         question2 = input("¿Desea firma este documento?")
                         if question2 == "y" or question == "Y":
-                            document_name = str(user_name + "_matricula.txt")
-                            signature = self.sign_document(document_name, compare2.encode())
+                            document_name = str("database/matricula/" + user_name + "_matricula.txt")
+                            print("CUANDO VAMOS A SACAR LA CONTRASEÑA: ", compare2)
+                            signature = self.sign_document(document_name, compare2, kv)
                             print("Documento firmado")
+                        #q3 = input("Validar doc?")
+                        #if q3 =="y" or q3 == "Y":
+                            #self.verify_document()
 
