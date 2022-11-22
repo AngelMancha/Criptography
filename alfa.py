@@ -111,6 +111,68 @@ class Alfa():
             data = json.load(file)
         return data
 
+    def create_tuition(self, user, asignatura):
+        """Crea un documento con las asignaturas en las que está matriculado"""
+        file_name = str(user) + "_matricula.txt"
+        file = open(file_name, "w")
+        file.write("Alumno: " + user + os.linesep)
+        file.write("Asignatura: " + asignatura + os.linesep)
+        file.close()
+
+    def document_bytes(self, document):
+        doc = open(document, 'rb')
+        doc_data = doc.read()
+        doc.close()
+        return doc_data
+    def sign_document(self, document, key):
+        """Sirve para firmar el mensaje"""
+        # primero generamos la clave privada del usuario
+        private_key = self.generate_kv()
+        #obtenemos  la clave privada y pública serialiánzola y cifrándola con la clave del usuario
+        private_key_bytes = self.serialize_private_key(private_key, key)
+        public_key_bytes = self.serialize_public_key(private_key)
+        #GUARDAR EN JSON
+        doc_bytes = self.document_bytes(document)
+        signature = private_key.sign(doc_bytes,
+                                    padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
+                                                salt_length=padding.PSS.MAX_LENGTH),
+                                    hashes.SHA256())
+
+        #añadimos al documento original la firma obtenida
+        self.add_signature(document, signature)
+        return signature
+
+    def verify_document(self, private_key, documento, signature):
+        public_key = private_key.public_key()
+        public_key.verify(
+            signature, documento, padding.PSS( mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA256()
+        )
+
+    def add_signature(self, document, signature):
+        with open(document, 'ab') as file:
+            file.write(signature)
+
+    def generate_kv(self):
+        """Devuelve un objeto para la clave privada"""
+        return rsa.generate_private_key(public_exponent=65537, key_size=2048)
+
+
+    def serialize_public_key(self, private_key):
+        public_key = private_key.public_key()
+        return public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+
+    def serialize_private_key(self, private_key, password):
+
+        return private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.BestAvailableEncryption(password)
+        )
+
+
     def inicio_sesion(self):
         """Función para la implementación del inicio de sesión. Comprueba que el usuario esté registrado
         y en caso de que lo esté le pide la contraseña al usuario. Si es correcta le da la bienvenida a la aplicacion"""
@@ -194,12 +256,13 @@ class Alfa():
 
                                 asignatura_descif=self.decrypt(key_descif, None, iv_json_bytes ,asignatura_cif_bytes , tag_json_bytes)
 
-                        print("El usuario ",user_name, "está matriculado en la asignatura " , asignatura_descif.decode())
-
-
-
-
-
-
-
+                        self.create_tuition(user_name, asignatura_descif.decode())
+                        print("Se ha generado un documento para ",user_name, "con la asignatura" , asignatura_descif.decode())
+                        print("contraseña hash: ", compare2)
+                        print("Tipo de dato: ", type(compare2.encode()))
+                        question2 = input("¿Desea firma este documento?")
+                        if question2 == "y" or question == "Y":
+                            document_name = str(user_name + "_matricula.txt")
+                            signature = self.sign_document(document_name, compare2.encode())
+                            print("Documento firmado")
 

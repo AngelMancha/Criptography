@@ -1,32 +1,52 @@
 [
   {
-    "Usuario": "angelito",
-    "Nombre": "b'\\x93\\x94\\x8dM\\x0f'",
-    "Carrera": "b'\\xa4\\xbb\\xbfr\\x8771?\\x1c\\xb0a\\xf4ij\\x1ef\\x18\\xe9l-\\xc6\\xe6'",
-    "Asignatura": "\u0090\u00ed\u00be_\u009aE\u0097\u00f0W\u0098J\u008eXt\u00d8\u00ec\u00b68%\u00fe\u0097B\u0003U\u00c5\u0013^\u00e3}5%\u00f5\u001c\u0090\u00c5s",
-    "Password": "b':r\\x93i\\x0c)\\x1e\\x99\\xa6\\x16\\x81\\x88\\xc9e\\xe2\\xda\\xe4\\x82LE >\\xa3\\xa6\\xbbo{\\xb2\\x0cHu\\x98'",
-    "Salt": "80MIE7A882D66DYQ",
-    "iv_asig": "\u00b9\u0082@E\u0095}\u00a6e\u00beR\u00afB",
-    "tag_asig": "E\u009b\u0014\u00facO\u00d7`\u00e5\u00e5\u00ec\u0083\u008c\u00f9sR"
+    "Usuario": "Ruth2705",
+    "Nombre": "b'\\xff\\\\n\\x06'",
+    "Carrera": "b'\\xbas\\xe9\\x1f\\xacs\\x8ejY\\xa0sD\\xa6\\xd7\\x04\\xd8\\xc3\\x8c\\xcc\\xd6\\xe3\\xd1'",
+    "Asignatura": "\u00bb\u00e1\u00ca#a\u00ea\u00fcv\u00e1G\u0013/\f\u00f7Z\u00acW\u00cf\u0017\u008fL8M\u0080-?\u00fa\u0089\u00a4\u0090R\u00a9\u0003\u0018i|",
+    "Password": "b'.\\x9fJ\\xc7\\xfb\\xa9/b\\xec\\x1eA<\\xb88\\xf6\\x0c]\\xf7\\x8e5\\x95\\xeaw\\x1e\\x96\\xc5\\xa48\\xb4\\x15}x'",
+    "Salt": "5ZO0SXAAKC5BV1FN",
+    "iv_asig": "\u0011\u00b1-\u009c+\u00f4l=\u0090\u00fc/\u00ce",
+    "tag_asig": "\u0011\u00e3\u00f5\u00dd\u00bd=b\u0007\u00b7L\u00b0\u0097\u00d3\u00ec\u00b5\u0084"
   },
   {
-    "Usuario": "e",
-    "Nombre": "b'\\x11'",
-    "Carrera": "b'\\x10K\\x9d\\x11\\xba&\\xd3\\xacs\\x1d+\\xec6C\\xff\\xd5kX\\x19uOA'",
-    "Asignatura": "\"\u00e6zx\u0096\u008ei\u0098\u00b4\u0099>y\u009fT\u0099\u00aeS\u00ef\u00a2f\u008e\u0086\u00b9\u00db\u00ef\u008es\u00d0\u000f\u00d1\u00fbiWK0e",
-    "Password": "b\"\\xae\\xb1\\xee\\xfc(Q\\xb9\\xd7\\xbfn\\xb6\\xe5\\xe8\\xdd+M\\xcc\\x9b<\\x04Y\\x81$\\xe3'\\x95\\xf6\\x14\\x9b\\xf7\\xd4\\x0c\"",
-    "Salt": "A1VXCZQXJXZUMVGU",
-    "iv_asig": "\u00dbv\u00a1\u0090\u00c8\u00ac\u00e8\u00a4\u00e0\u0095\u00b8a",
-    "tag_asig": "\u00be\u00c2\u00ee\u00b7\u000b\r\u0085\u008e\u00b4\u00ffO\u00d2U\u00d06\u00ee"
+    "Usuario": "ruth2002z",
+    "Nombre": "b'\\xf7\\x15Up-X.\\x9c\\xff\\n\\x96<'",
+    "Carrera": "b'\\x98V%\\xb3\\x86\\t\\xdf\\x951\\xe5H\\xff\\r\\x1f\\x0c\\xf3\\xd0\\xd5\\x9b\\xd7\\xc3\\x18'",
+    "Asignatura": "dN\u00b1v/\u00e1\u00a1\u00ad\u00f9H\u008f15^aB\u00deu?\u00b6\u00ees\\\u0015\u00e2m\u00ff6\u00e2B\u00df\u0093\u00c3\u0092d\u00ea",
+    "Password": "b'\\x8a\\xc3^\\xcd&x\\x92\\xe2\\x89\\xf7t\\xaf\\xb4jz\\x9d\\r\\x06\\x8c\\x80h\\x97\\x16s\\xf1\\xdf\\xa9IR\\x80e\\x81'",
+    "Salt": "S4QBGTC3JUTQ4OHT",
+    "iv_asig": "\u0005J\u00db \u0087AX6t\u0003\u00e98",
+    "tag_asig": "\u0010\u00fe\u0085\u00b0\u00ba\u00e5]Kg\u00fcLArO\u0080\u00f1"
   },
   {
-    "Usuario": "eeeee",
-    "Nombre": "b'G\\xc3\\x15\\xf3\\xa0\\x1a\\xfb\\x8c'",
-    "Carrera": "b'\\x88\\x96\\xbc\\xe9\\x9f\\xc2\\xb0^x\\x9d\\xe3H\\x9dWF\\xf5pm!9\\xaf\\xcc'",
-    "Asignatura": "\u00b0\u00b4\u00af\u00c1[\u000eo76\u008f\u00cd\u00f1;\r\u00fa\u00a5\u0012\u0002\u00f4\u00e2\u00c0S\u0097o\u00ab\u0017\u00cb\u00eb\u00cf\u0084\u00f8\u00e1\u0007)W\f",
-    "Password": "b'v\\x12\\xd3A\\x06\\xec`\\xd1\\xbb,\\x1a\\x95bFaj!\\xc9\\x12\\xfc\\xca\\x8dN\\xd8t9\\xaf\\xd2\\xf7cG`'",
-    "Salt": "RJY2XPY73DH2EUKE",
-    "iv_asig": "\u00ea\u00d6\u00f7\u00fe\u00a8\u00d9\u000e\u009a\u0014\u00d5\u00b3\u00c1",
-    "tag_asig": "\u00aa\u00a2\u00d6\u00fa`$\\\u00e8\u00c3\f\u00e7\u00f6\u0003\u0089F\u00e5"
+    "Usuario": "ruth",
+    "Nombre": "b'Nou0'",
+    "Carrera": "b'wV\\xe4\\xa6\\xb8\\x9dh\\xcb+6\\xe0\\xf1I\\x14\\xdd<\\x05 \\x17b*\\xda'",
+    "Asignatura": "\u0080\u0086g\"\u00e0\u0013\u00ed]k\u00e2e\u00cf}\u00de\u00bb-+dF(3\u00f4Y\u00b0\u00ef\u00df\u00der\u00b9\u00a0\u009c\u00bf\u00d8\u0004~\u0019",
+    "Password": "b'\\x0e\\xe6;_\\xcf\\xb4\\x1a\\xdcf\\xab_?\\xa4\\xb4\\xf1rx\\xbd\\xa6\\xa8\\x1d\\tj\\xe4Q\\x1d\\n\\x8c\\xcd\\xe8\\x07*'",
+    "Salt": "VL71N594CLGSS63B",
+    "iv_asig": "8\u0010\u00e3\u00dft\u00f3\u0002\u00edzm\u009f\u0091",
+    "tag_asig": "y,\u001c\u00e5\u0004\u00cc\u009a\u0090\u00bb\u00d1\u00f9\u00b9\u0091\u0084\u00d5P"
+  },
+  {
+    "Usuario": "ruth10045",
+    "Nombre": "b'2\\xd1Fm'",
+    "Carrera": "b'u|\\xf1V\\xeb\\xa6\\x87\\xfc\\x1b\\xb0\\xf8%\\xf3e\\xe4\\xe8\\xaa\\\\\\xa6\\xdb}\\xd7'",
+    "Asignatura": "\u00a7g?fOh\u0017TG\u008e\u00b2\u00f2\u00e7\u009aVf\u00bb\u00c8t~,\u0081\u00bf\u00b8\u00bc\u0016\f:\u00d1\u00cfF\u001b\u00a1\u00d5t\u00f0",
+    "Password": "b'\\xf4\\xc5\\xf2\\xff\\xc5z\\x91\\x90\\xdb\\x1b\\xcb\\xb3\\xd7\\xb0%\\xa1\\xdf\\xa0\\xf8\\xe6\\xa8\"\\x1d\\x17o\\xc5\\xe8\\xe9M\\x1cEF'",
+    "Salt": "PK7W517567I9EDCD",
+    "iv_asig": "\u00a91\u00caz9\u009bBG\u009e=y]",
+    "tag_asig": "u\u000f[\u00ef\u0017[\u00f2\u00e9\u00da\u00bb;y\u0004'&*"
+  },
+  {
+    "Usuario": "patata23",
+    "Nombre": "b'W~\\xb8\\x8c\\xff\\x95'",
+    "Carrera": "b's\\xda\\xcc\\xef\\xa6Vkm\\xdf\\xf6\\x18\\xd4U-a\\xd2\\x93\\xae\\xb6\\xce\\x8c\\xc6\\xbf$`\\x7f\\xf2^\\x05\\x1d\\\\1'",
+    "Asignatura": "\u0003\u00a4\u00b7\u00ef\u001fO/V\u00c7\u008b\u00be\u00df\u00c9\u00b3\u00ac\u007f4\u00c8\u00da\u00f2\u00fa`\u008d\u0018}\u00ba\u000f\u0018j\u00896\u00f0\u00bd*\u00c2\u00fc\u00e0{\u00e7\u00ff\u00c6\u001c\u00a0",
+    "Password": "b'N\\xcd\\x9b\\xb1\\xdf\\xb9\\xf2\\xbf8\\x8c\\x9c\\xc9\\x90k\\xcb?<\\x92%\\xe7\\xdb\\x1a\\xc7_\\x8fl\\xae\\xb0\\x0c]\\xd9\\xb6'",
+    "Salt": "S53ND57KH1ZK4S76",
+    "iv_asig": "q\u0002\u0007\u008d/xR\u000e\u0094w\u00f2q",
+    "tag_asig": "\u00a4\u0001\u00c4Q\u00bc\n\u00b6\u00de3\u008a\u00ea\u00b5UN7\\"
   }
 ]
