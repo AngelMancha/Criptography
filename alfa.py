@@ -42,6 +42,14 @@ class Alfa():
         carrera_cif = self.encrypt(key, self.carrera, None)
         asignatura_cif = self.encrypt(key, self.asignatura, None)
 
+
+        #Creamos una clave privada y pública para el usuario
+        private_key = self.generate_kv()
+        # obtenemos  la clave privada y pública serialiánzola y cifrándola con la clave del usuario
+        private_key_bytes = self.serialize_private_key(private_key, hashed_password)
+        public_key_bytes = self.serialize_public_key(private_key)
+        print("Tipo de dato de la contraseña es ", type(hashed_password))
+        print("Valor: ", hashed_password)
         #Rellenamos el archivo json con los datos de los alumnos que se van a registrar
         user_data = {"Usuario": str(self.usuario), "Nombre": str(nombre_cif[1]), "Carrera": str(carrera_cif[1]), 
                      "Asignatura": (asignatura_cif[1]).decode('latin-1'), "Password": hashed_password.decode('latin-1'), "Salt": salt,
