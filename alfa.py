@@ -48,8 +48,6 @@ class Alfa():
         # obtenemos  la clave privada y pública serialiánzola y cifrándola con la clave del usuario
         private_key_bytes = self.serialize_private_key(private_key, hashed_password)
         public_key_bytes = self.serialize_public_key(private_key)
-        print("Tipo de dato de la contraseña es ", type(hashed_password))
-        print("Valor: ", hashed_password)
         #Rellenamos el archivo json con los datos de los alumnos que se van a registrar
         user_data = {"Usuario": str(self.usuario), "Nombre": str(nombre_cif[1]), "Carrera": str(carrera_cif[1]), 
                      "Asignatura": (asignatura_cif[1]).decode('latin-1'), "Password": hashed_password.decode('latin-1'), "Salt": salt,
@@ -159,17 +157,24 @@ class Alfa():
         self.add_signature( user_name, signature)
         return signature
 
-    def verify_document(self, private_key, documento, signature):
-        public_key = private_key.public_key()
-        public_key.verify(
-            signature, documento, padding.PSS( mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA256()
-        )
+    def verify_document(self, public_key, document, signature):
+        ku = self.desserialize_public_key(public_key)
+        doc_bytes = self.document_bytes(document)
+        signature_bytes = self.document_bytes(signature)
+        try:
+            ku.verify(
+                signature_bytes, doc_bytes, padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA256()
+            )
+            print("La firma ha sido verificada.")
+        except:
+            print("¿Alerta! El documento ha sido modificado.")
+
 
     def add_signature(self, user, signature):
 
-        path = "database/matricula/"
+        path = "database/doc_firmado/"
         file_name = path + str(user) + "_matricula_firmada.txt"
-        file = open(file_name, "w")
+        file = open(file_name, "wb")
         file.write(signature)
 
      #def add_signature(self, document, signature):
@@ -197,8 +202,6 @@ class Alfa():
         )
 
     def desserialize_private_key(self, private_key, password):
-        print("El tipo de dato de la contraseña en desserialized es: ", type(password))
-        print("El valor es: ", password)
         return serialization.load_pem_private_key(private_key.encode('utf-8'), password = password)
 
 
@@ -298,7 +301,19 @@ class Alfa():
                             print("CUANDO VAMOS A SACAR LA CONTRASEÑA: ", compare2)
                             signature = self.sign_document(document_name, compare2, kv, user_name)
                             print("Documento firmado")
-                        #q3 = input("Validar doc?")
-                        #if q3 =="y" or q3 == "Y":
-                            #self.verify_document()
+
+                        q3 = input("Validar doc?")
+                        if q3 =="y" or q3 == "Y":
+                            document_name = str("database/matricula/" + user_name + "_matricula.txt")
+                            signature = str("database/doc_firmado/" + user_name + "_matricula_firmada.txt")
+
+                            self.verify_document(ku, document_name, signature)
+
+                        q4 = input("Desea ver si funciona????")
+                        if q4 == "y":
+                            document_name = str("database/matricula/documento_corrupto.txt")
+                            signature = str("database/doc_firmado/" + user_name + "_matricula_firmada.txt")
+
+                            self.verify_document(ku, document_name, signature)
+
 
