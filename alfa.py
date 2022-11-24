@@ -204,6 +204,10 @@ class Alfa():
     def desserialize_private_key(self, private_key, password):
         return serialization.load_pem_private_key(private_key.encode('utf-8'), password = password)
 
+    def desserialize_public_key(self, public_key):
+        return serialization.load_pem_public_key(public_key.encode('utf-8'))
+
+
 
     def inicio_sesion(self):
         """Función para la implementación del inicio de sesión. Comprueba que el usuario esté registrado
@@ -298,7 +302,7 @@ class Alfa():
                         question2 = input("¿Desea firma este documento?")
                         if question2 == "y" or question == "Y":
                             document_name = str("database/matricula/" + user_name + "_matricula.txt")
-                            print("CUANDO VAMOS A SACAR LA CONTRASEÑA: ", compare2)
+                            
                             signature = self.sign_document(document_name, compare2, kv, user_name)
                             print("Documento firmado")
 
