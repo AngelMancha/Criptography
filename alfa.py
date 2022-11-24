@@ -138,7 +138,7 @@ class Alfa():
         doc_data = doc.read()
         doc.close()
         return doc_data
-    def sign_document(self, document, key, private_key_str):
+    def sign_document(self, document, key, private_key_str, user_name):
         """Sirve para firmar el mensaje"""
         # primero generamos la clave privada del usuario
 
@@ -156,7 +156,7 @@ class Alfa():
                                     hashes.SHA256())
 
         #añadimos al documento original la firma obtenida
-        self.add_signature( document, signature)
+        self.add_signature( user_name, signature)
         return signature
 
     def verify_document(self, private_key, documento, signature):
@@ -165,9 +165,16 @@ class Alfa():
             signature, documento, padding.PSS( mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA256()
         )
 
-    def add_signature(self, document, signature):
-        with open(document, 'ab') as file:
-            file.write(signature)
+    def add_signature(self, user, signature):
+
+        path = "database/matricula/"
+        file_name = path + str(user) + "_matricula_firmada.txt"
+        file = open(file_name, "w")
+        file.write(signature)
+
+     #def add_signature(self, document, signature):
+        #with open(document, 'ab') as file:
+            #file.write(signature)
 
     def generate_kv(self):
         """Devuelve un objeto para la clave privada"""
@@ -282,13 +289,14 @@ class Alfa():
 
                                 asignatura_descif=self.decrypt(key_descif, None, iv_json_bytes ,asignatura_cif_bytes , tag_json_bytes)
 
+                        #CREAMOS UN DOCUMENTO CON LA ASIGNATURA DEL USUARIO
                         self.create_tuition(user_name, asignatura_descif.decode())
                         print("Se ha generado un documento para ",user_name, "con la asignatura" , asignatura_descif.decode())
                         question2 = input("¿Desea firma este documento?")
                         if question2 == "y" or question == "Y":
                             document_name = str("database/matricula/" + user_name + "_matricula.txt")
                             print("CUANDO VAMOS A SACAR LA CONTRASEÑA: ", compare2)
-                            signature = self.sign_document(document_name, compare2, kv)
+                            signature = self.sign_document(document_name, compare2, kv, user_name)
                             print("Documento firmado")
                         #q3 = input("Validar doc?")
                         #if q3 =="y" or q3 == "Y":
