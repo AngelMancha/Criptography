@@ -43,9 +43,10 @@ class Alfa():
         asignatura_cif = self.encrypt(key, self.asignatura, None)
 
 
-        #Creamos una clave privada y pública para el usuario
+        #Creamos una clave privada y pública para el usuario que se ha registrado y después la guardamos en el json
         private_key = self.generate_kv()
-        # obtenemos  la clave privada y pública serialiánzola y cifrándola con la clave del usuario
+
+        #Serializamos las claves y ciframos la privada con la contraseña introducida por el usuario
         private_key_bytes = self.serialize_private_key(private_key, hashed_password)
         public_key_bytes = self.serialize_public_key(private_key)
         #Rellenamos el archivo json con los datos de los alumnos que se van a registrar
@@ -138,34 +139,36 @@ class Alfa():
         return doc_data
     def sign_document(self, document, key, private_key_str, user_name):
         """Sirve para firmar el mensaje"""
-        # primero generamos la clave privada del usuario
 
-        #private_keys_bytes = private_key_str.encode('utf-8')
+        # primero deserializamos la clave privada y la desciframos con la contraseña del introducida por el usuario
+
         private_key = self.desserialize_private_key(private_key_str, key)
-        #private_key = self.generate_kv()
-        #obtenemos  la clave privada y pública serialiánzola y cifrándola con la clave del usuario
-       # private_key_bytes = self.serialize_private_key(private_key, key)
-        #public_key_bytes = self.serialize_public_key(private_key)
 
         doc_bytes = self.document_bytes(document)
+
+        #firmamos el documento deseado utilizando la clave privada que hemos calculado
         signature = private_key.sign(doc_bytes,
                                     padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
                                                 salt_length=padding.PSS.MAX_LENGTH),
                                     hashes.SHA256())
 
-        #añadimos al documento original la firma obtenida
+        #Creamos un documento con la firma obtenida
         self.add_signature( user_name, signature)
         return signature
 
     def verify_document(self, public_key, document, signature):
+
+        #deserializamos la clave pública  para poderla usar en el algoritmo de verificación
         ku = self.desserialize_public_key(public_key)
         doc_bytes = self.document_bytes(document)
+
         signature_bytes = self.document_bytes(signature)
+        # El algoritmo de verififación comprueba con la clave pública que el documento no se haya modificado y pertenezca al usuario
         try:
             ku.verify(
                 signature_bytes, doc_bytes, padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA256()
             )
-            print("La firma ha sido verificada.")
+            print("La firma ha sido verificada. El documento no ha sido modificado.")
         except:
             print("¿Alerta! El documento ha sido modificado.")
 
@@ -258,7 +261,7 @@ class Alfa():
                         #4: comparamos el hash calculado ahora con el guardado para ese usuario en la base de datos:
                         compare2 = usuario["Password"] #string
                         compare2 = compare2.encode('latin-1')# byte
-                        print("La contraseña sacada del JSON es: ", compare2)
+
 
 
                 if str(compare1) == str(compare2):
@@ -291,6 +294,8 @@ class Alfa():
                                 asignatura_cif=usuario["Asignatura"]
                                 asignatura_cif_bytes=asignatura_cif.encode('latin-1')
 
+                                #obtenemos la clave privada y pública del usuario para utilizarla después
+                                #en la firma y la verificación.
                                 kv = usuario["private_key"]
                                 ku = usuario["public_key"]
 
@@ -302,22 +307,29 @@ class Alfa():
                         question2 = input("¿Desea firma este documento?")
                         if question2 == "y" or question == "Y":
                             document_name = str("database/matricula/" + user_name + "_matricula.txt")
-                            
+
+                            #llamamos a la función que se encarga de firmar el documento
                             signature = self.sign_document(document_name, compare2, kv, user_name)
                             print("Documento firmado")
 
-                        q3 = input("Validar doc?")
-                        if q3 =="y" or q3 == "Y":
-                            document_name = str("database/matricula/" + user_name + "_matricula.txt")
-                            signature = str("database/doc_firmado/" + user_name + "_matricula_firmada.txt")
+                            #Una vez firmado le preguntamos al usuario si quiere validar el documento firmado
+                            q3 = input("Validar doc?[y/n]?")
+                            if q3 =="y" or q3 == "Y":
+                                document_name = str("database/matricula/" + user_name + "_matricula.txt")
+                                signature = str("database/doc_firmado/" + user_name + "_matricula_firmada.txt")
 
-                            self.verify_document(ku, document_name, signature)
+                                self.verify_document(ku, document_name, signature)
 
-                        q4 = input("Desea ver si funciona????")
-                        if q4 == "y":
-                            document_name = str("database/matricula/documento_corrupto.txt")
-                            signature = str("database/doc_firmado/" + user_name + "_matricula_firmada.txt")
+                            #por último comprobamos la firma con un documento modificado para comprobar que el
+                            #algoritmo de verificación funciona correctamente y devuelve una excepción.
+                            print("\n \nVamos a comprobar la firma comparándolo con un documento modificado")
+                            q4 = input("Desea ver si funciona?[y/n]?")
 
-                            self.verify_document(ku, document_name, signature)
+
+                            if q4 == "y":
+                                document_name = str("database/matricula/documento_corrupto.txt")
+                                signature = str("database/doc_firmado/" + user_name + "_matricula_firmada.txt")
+
+                                self.verify_document(ku, document_name, signature)
 
 
