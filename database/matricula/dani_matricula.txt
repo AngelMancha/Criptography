@@ -1,2 +1,0 @@
-Alumno: dani
-Asignatura: Sistemas Electrónicos

@@ -57,10 +57,10 @@ class Alfa():
                     "private_key": private_key_bytes.decode('utf-8'), "public_key": public_key_bytes.decode('utf-8')
         }
 
-        with open("database\data.json", "r", encoding="utf-8") as file:
+        with open("database/data.json", "r", encoding="utf-8") as file:
             data = json.load(file)
             data.append(user_data)
-        with open("database\data.json", "w", encoding="utf-8", newline="") as file:
+        with open("database/data.json", "w", encoding="utf-8", newline="") as file:
             json.dump(data, file, indent=2)
 
     def encrypt(self, key, plaintext, associated_data: None):
